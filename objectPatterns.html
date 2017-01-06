@@ -1,0 +1,97 @@
+<html>
+<body>
+<script>
+/*
+var person = (function() {
+	var age = 25;
+	return {
+		name: "Nicholas",
+		get age(){
+			return age;
+		},
+		set age(value) {
+			age = value;
+		},
+		growOlder: function() {
+			age++;
+		}
+	};
+}());
+console.log(person.age);
+person.age = 70;
+console.log(person.age);
+*/
+function Rectangle(length, width) {
+		 function getlength() {
+			return length;
+		}
+		function setlength(v) {
+			return length = v;
+		}
+		function getwidth() {
+			return width;
+		}
+		function setwidth(value) {
+			width = value;
+		}		
+	return Object.create(Rectangle.prototype, {
+		getLen:{
+			value:getlength
+		},
+		setLen: {
+			value:setlength
+		},
+		getWid: {
+			value: getwidth
+		},
+		setWid: {
+			value:setwidth
+		}
+	});
+}
+Rectangle.prototype.getArea = function() {
+	return this.getLen() * this.getWid();
+};
+var r = new Rectangle(2, 5);
+console.log(r.getLen());
+console.log(r.getWid());
+r.setLen(4);
+r.setWid(10);
+console.log(r.getLen());
+console.log(r.getWid());
+console.log(r.getArea());
+function Square(size) {
+		 function getlength() {
+			return size;
+		}
+		function setlength(v) {
+			return size = v;
+		}
+		function getwidth() {
+			return size;
+		}
+		function setwidth(value) {
+			size = value;
+		}
+		return Object.create(Rectangle.prototype, {
+			getLen:{
+				value:getlength
+			},
+			setLen: {
+				value:setlength
+			},
+			getWid: {
+				value: getwidth
+			},
+			setWid: {
+				value:setwidth
+			}
+		});
+}
+var s = new Square(100);
+console.log(s.getLen());
+console.log(s.getArea());
+
+</script>
+</body>
+</html>	

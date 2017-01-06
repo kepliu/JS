@@ -1,0 +1,122 @@
+<html>
+<body>
+<script>
+function mixin(receiver, supplier) {
+	for (var property in supplier) {
+		if (supplier.hasOwnProperty(property)) {
+			receiver[property] = supplier[property];
+		}
+	}
+	return receiver;
+}
+function EventTarget() {
+}
+EventTarget.prototype = {
+	constructor: EventTarget,
+	addListener: function(type, listener) {
+		//create an array if it doesn't exist
+		if (!this.hasOwnProperty("_listeners")) {
+			this._listeners = [];
+		}
+
+		if (typeof this._listeners[type] === "undefined") {
+			this._listeners=[];
+			this._listeners[type]=[];
+		}
+		this._listeners[type].push(listener);
+	},
+	fire: function(event) {
+		if (!event.target){
+			event.target = this;
+		}
+		if (!event.type) { //falsy
+			throw new Error("Event object missing 'tpe' property.");
+		}
+		if (this._listeners && this._listeners[event.type] instanceof Array) {
+			var listeners = this._listeners[event.type];
+			for (var i=0; i < listeners.length;  i++) {
+				listeners[i].call(this, event);
+			}
+		}
+	},
+	removeListener: function(type, listener){
+		if(this._listeners && this._listeners[type] instanceof Array){
+			var listeners = this._listeners[type];
+			for (var i=0; i<listeners.length; i++) {
+				if (listeners[i] === listener){
+					listeners.splice(i, 1);
+					break;
+				}
+			}
+		}
+	}
+};
+var target  = new EventTarget();
+target.addListener("message", function(event){
+	console.log("Message is " + event.data);
+});
+target.addListener("message", function(event){
+	console.log("Message1 is " + event.data);
+});
+target.fire({
+	type: "message",
+	data: "Hello world"
+});
+
+function Person(name) {
+	this.name = name;
+}
+/*
+mixin(Person.prototype, EventTarget.prototype);
+mixin(Person.prototype, {
+	constructor: Person,
+	sayName: function() {
+		console.log(this.name);
+		this.fire({ type: "namesaid", data: this.name});
+	}
+});
+
+Person.prototype = Object.create(EventTarget.prototype);
+Person.prototype.constructor=Person;
+Person.prototype.sayName = function() {
+		console.log(this.name);
+		this.fire({ type: "namesaid", data: this.name});
+};
+		
+var person = new Person("Nicholas");
+*/
+var person = mixin(new EventTarget(), {
+	name: "Nicholas",
+	sayName: function() {
+	
+		console.log("sayName: " + this.name);
+		this.fire({type: "namesiad", name: this.name });
+		this.addListener("namesiad", function(event){
+
+			 console.log("namesiad is " + event.name);
+		});
+	}
+});
+console.log(person instanceof Person); 
+console.log(person instanceof EventTarget);
+
+person.addListener("nameType", function(event){
+	console.log("nameType is " + event.data);
+});
+person.fire({
+	type: "nameType",
+	data: "nameType Hello world"
+});
+person.sayName();
+person.sayName();
+person.sayName();
+function logArrayElements(element, index, array) {
+  console.log('a[' + index + '] = ' + element + " length: " + array.length);
+}
+
+// Notice that index 2 is skipped since there is no item at
+// that position in the array.
+[2, 5, , 9].forEach(logArrayElements);
+</script>
+</body>
+</html>	
